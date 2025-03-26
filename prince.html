@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>prince  </title>
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    line-height: 1.6;
+    background-color: #f9f9f9;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 36px;
+    font-weight: bold;
+    text-align: center;
+    margin: 40px 0;
+    color: #333;
+    font-style: arial;
+}
+
+form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 60px;
+}
+
+#search-input {
+    width: 60%;
+    max-width: 400px;
+    padding: 10px 20px;
+    border: none;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    font-size: 18px;
+    color: #333;
+}
+
+#search-button {
+    padding: 10px 20px;
+    background-color: #138065;
+    color: #fff;
+    border: none;
+    font-size: 18px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+.search-results {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.search-resurt {
+    width: 30%;
+    border-radius: 5px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    background-color: #fff;
+    transition: transform 0.2s ease-in-out;
+}
+
+.search-resurt:hover {
+    transform: translateY(-5px);
+}
+
+.search-resurt img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.search-resurt:hover img {
+    opacity: 0.9;
+}
+
+.search-resurt a {
+    font-size: 18px;
+    text-decoration: none;
+    color: #333;
+    display: block;
+    padding: 10px;
+    text-transform: capitalize;
+    text-align: center;
+    font-weight: 500;
+}
+
+#show-more {
+    background-color: #008cba;
+    font-size: 18px;
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    text-align: center;
+    display: block;
+    margin: 30px auto;
+    border-radius: 5px;
+    cursor: pointer;
+    display: none;
+}
+
+@media screen and (max-width: 768px) {
+    .search-resurt {
+        width: 45%;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .search-resurt {
+        width: 100%;
+    }
+}
+
+
+    </style>
+</head>
+<body> 
+
+
+    <h1>Image Search Engine</h1>
+    <form action="">
+
+        <input type="text" id="search-input"  placeholder="search for image">
+        <button id="search-button">search</button>
+
+    </form>
+    <div class="search-results">
+        <div class="search-resurt">
+            <img src="https://images.unsplash.com/photo-1523206489230-c012c64b2b48?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fG1vYmlsZSUyMGFwcHxlbnwwfHwwfHx8MA%3D%3D" alt="phone">
+            <a href="https://unsplash.com/photos/silver-iphone" target="_blank">phone</a>
+        </div>
+        <div class="search-resurt">
+            <img src="https://images.unsplash.com/photo-1682687220305-ce8a9ab237b1?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="animal">
+            <a href="https://unsplash.com/photos/silver-iphone" target="_blank">animal</a>
+        </div>
+        <div class="search-resurt">
+            <img src="https://images.unsplash.com/photo-1701725313832-d8f7fadb3006?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzfHx8ZW58MHx8fHx8" alt="snow and tree">
+            <a href="https://unsplash.com/photos/silver-iphone" target="_blank">snow and tree</a>
+        </div>
+    </div>
+
+    <button id="show-more">show more</button>
+    <script>
+const accessKey = "_AFRPGy-hqYB8kwELxfIYZL-U0uHEBGEk5jdzohXd1I";
+const formEl = document.querySelector("form");
+const inputEl = document.getElementById("search-input");
+const searchResults = document.querySelector(".search-results");
+const showMore = document.getElementById("show-more");
+
+let inputData = "";
+let page = 1;
+async function searchImages(){
+   inputData = inputEl.value;
+   const url = `https://api.unsplash.com/search/photos?page=${page}&query=${inputData}&client_id=${accessKey}`;
+
+   const response = await fetch(url);
+   const data = await response.json();
+
+   const results = data.results;
+
+   if(page == 1){
+    searchResults.innerHTML = "";
+   }
+
+   results.map((result) =>{
+    const imageWrapper = document.createElement('div');
+    imageWrapper.classList.add("search-resurt");
+    const image = document.createElement('img');
+    image.src = result.urls.small;
+    image.alt = result.alt_description;
+    const imageLink = document.createElement('a');
+    imageLink.href = result.links.html;
+    imageLink.target = "_blank";
+    imageLink.textContent = result.alt_description;
+
+    imageWrapper.appendChild(image);
+    imageWrapper.appendChild( imageLink);
+    searchResults.appendChild( imageWrapper);
+   });
+
+   page++; 
+   
+   if(page > 1){
+    showMore.style.display = "block";
+   }
+}
+
+formEl.addEventListener("submit", (event) =>{
+    event.preventDefault();
+    page = 1;
+    searchImages();
+});
+
+showMore.addEventListener("click", () =>{
+
+    searchImages();
+});
+    </script>
+</body>
+</html>
